@@ -1,10 +1,11 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
+
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -21,8 +22,13 @@ export default function Home() {
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
-
-      setResult(data.result);
+      var markdown = require( "markdown" ).markdown;
+      //setResult(markdown.toHTML(data.result.replace(/A/g, "<br>")));
+      //setResult(data.result.replace(/A/g, "\r\n"));
+      //let result = result.replace(/A/g, "B");
+          //document.querySelector("#output").innerHtml = markdown.toHTML(data.result.replace(/A/g, "<br>"));
+        //setResult({__html: markdown.toHTML(data.result.replace(/END/g, "\r\n").replace(/A./g, "\r\nA."))});
+    setResult({__html: markdown.toHTML(data.result.replace(/END/g, "\r\n"))});
       setAnimalInput("");
     } catch(error) {
       // Consider implementing your own error handling logic here
@@ -39,19 +45,21 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+        <img src="/wikiHow Circle Logo.png" className={styles.icon} />
+        <h3>Create a Quiz</h3>
         <form onSubmit={onSubmit}>
           <input
             type="text"
+            style={{width: 600, marginLeft: -150}}
             name="animal"
-            placeholder="Enter an animal"
+            placeholder="Paste article body text here."
             value={animalInput}
             onChange={(e) => setAnimalInput(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+          <input type="submit" value="Generate Comprehension Quiz" />
         </form>
-        <div className={styles.result}>{result}</div>
+        <div style={{width: 600}} dangerouslySetInnerHTML={result}></div>
+
       </main>
     </div>
   );
